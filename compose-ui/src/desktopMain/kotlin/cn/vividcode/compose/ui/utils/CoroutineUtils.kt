@@ -1,4 +1,4 @@
-package cn.vividcode.compose.ui.expends
+package cn.vividcode.compose.ui.utils
 
 import kotlinx.coroutines.delay
 

@@ -1,4 +1,4 @@
-package cn.vividcode.compose.expends
+package cn.vividcode.compose.sample.expends
 
 import org.jetbrains.skiko.OS
 

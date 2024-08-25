@@ -1,4 +1,4 @@
-package cn.vividcode.compose.home
+package cn.vividcode.compose.sample.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

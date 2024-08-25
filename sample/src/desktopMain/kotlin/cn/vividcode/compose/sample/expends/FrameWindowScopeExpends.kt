@@ -1,4 +1,4 @@
-package cn.vividcode.compose.expends
+package cn.vividcode.compose.sample.expends
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.FrameWindowScope

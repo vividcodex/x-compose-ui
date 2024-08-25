@@ -11,13 +11,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import cn.vividcode.compose.sample.Route.AuthPage
 import cn.vividcode.compose.sample.Route.HomePage
-import cn.vividcode.compose.auth.AuthPage
-import cn.vividcode.compose.expends.setFullWindowContent
-import cn.vividcode.compose.expends.setMinSize
-import cn.vividcode.compose.expends.setTransparentTitleBar
-import cn.vividcode.compose.home.HomePage
-import cn.vividcode.compose.window.WindowManager
-import cn.vividcode.compose.window.WindowZoomAnimate
+import cn.vividcode.compose.sample.auth.AuthPage
+import cn.vividcode.compose.sample.expends.setFullWindowContent
+import cn.vividcode.compose.sample.expends.setMinSize
+import cn.vividcode.compose.sample.expends.setTransparentTitleBar
+import cn.vividcode.compose.sample.home.HomePage
+import cn.vividcode.compose.sample.window.WindowManager
+import cn.vividcode.compose.sample.window.WindowZoomAnimate
 
 fun main() = application {
 	Window(

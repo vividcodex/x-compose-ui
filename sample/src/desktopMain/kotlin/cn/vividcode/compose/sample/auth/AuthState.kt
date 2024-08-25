@@ -1,4 +1,4 @@
-package cn.vividcode.compose.auth
+package cn.vividcode.compose.sample.auth
 
 /**
  * 项目名称：vividcode-compose

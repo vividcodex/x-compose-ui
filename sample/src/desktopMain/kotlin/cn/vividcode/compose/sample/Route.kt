@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import cn.vividcode.compose.expends.to
+import cn.vividcode.compose.sample.expends.to
 
 /**
  * 项目名称：vividcode-compose

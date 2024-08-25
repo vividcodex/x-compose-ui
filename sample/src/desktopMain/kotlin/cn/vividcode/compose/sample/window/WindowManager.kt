@@ -1,4 +1,4 @@
-package cn.vividcode.compose.window
+package cn.vividcode.compose.sample.window
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
-import cn.vividcode.compose.expends.to
+import cn.vividcode.compose.sample.expends.to
 import cn.vividcode.compose.sample.RouteState
 import java.awt.GraphicsEnvironment
 import java.awt.MouseInfo
@@ -33,8 +33,8 @@ object WindowManager {
 		val bounds = screenDevices.first { mouseLocation in it.defaultConfiguration.bounds }
 			.defaultConfiguration.bounds
 		val position = WindowPosition(
-			x = (bounds.x + (bounds.width - size.width.value) / 2F).dp,
-			y = (bounds.y + (bounds.height - size.height.value) / 2F).dp
+			x = (bounds.x + (bounds.width - size.width.value) / 2f).dp,
+			y = (bounds.y + (bounds.height - size.height.value) / 2f).dp
 		)
 		return WindowState(size = size, position = position)
 	}
@@ -59,8 +59,8 @@ fun setWindowSize(
 ) {
 	WindowManager.windowState.position = WindowManager.windowState.position.let {
 		WindowPosition(
-			x = it.x - (targetWidth - WindowManager.windowState.size.width) / 2F,
-			y = it.y - (targetHeight - WindowManager.windowState.size.height) / 2F,
+			x = it.x - (targetWidth - WindowManager.windowState.size.width) / 2f,
+			y = it.y - (targetHeight - WindowManager.windowState.size.height) / 2f,
 		)
 	}
 	WindowManager.windowState.size = targetWidth to targetHeight
