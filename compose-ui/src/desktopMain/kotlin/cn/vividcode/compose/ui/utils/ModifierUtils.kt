@@ -10,3 +10,11 @@ fun Modifier.enabled(enabled: Boolean, modifier: Modifier.() -> Modifier): Modif
 		this then modifier()
 	} else this
 }
+
+fun Modifier.judge(
+	judge: Boolean,
+	whenTrue: Modifier.() -> Modifier,
+	whenFalse: Modifier.() -> Modifier,
+): Modifier {
+	return this then if (judge) whenTrue() else whenFalse()
+}

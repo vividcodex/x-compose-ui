@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -49,7 +52,9 @@ fun <T> XCarousel(
 	button: XCarouselButton = XCarousels.button(),
 	indicator: XCarouselIndicator = XCarousels.indicator(),
 	autoScroller: XCarouselAutoScroller = XCarousels.autoScroller(),
-	content: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
+	infinite: Boolean = false,
+	addition: @Composable BoxScope.(index: Int, item: T) -> Unit = { _, _ -> },
+	content: @Composable BoxScope.(index: Int, item: T) -> Unit,
 ) {
 	XCarousels(
 		modifier = modifier,
@@ -59,6 +64,8 @@ fun <T> XCarousel(
 		button = button,
 		indicator = indicator,
 		autoScroller = autoScroller,
+		infinite = infinite,
+		addition = addition,
 		content = content,
 	)
 }
@@ -75,22 +82,23 @@ fun <T> XCarousels(
 	button: XCarouselButton = XCarousels.button(),
 	indicator: XCarouselIndicator = XCarousels.indicator(),
 	autoScroller: XCarouselAutoScroller = XCarousels.autoScroller(),
-	content: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
+	infinite: Boolean = false,
+	addition: @Composable BoxScope.(index: Int, item: T) -> Unit = { _, _ -> },
+	content: @Composable BoxScope.(index: Int, item: T) -> Unit,
 ) {
 	Box(
 		modifier = modifier
 	) {
-		val listState = rememberLazyListState(firstIndex)
-		val widthState = remember { mutableIntStateOf(-1) }
+		val listState = rememberLazyListState(getRealIndex(infinite, items.size, firstIndex))
 		val indexState = remember { mutableIntStateOf(firstIndex) }
+		val widthState = remember { mutableIntStateOf(-1) }
 		val autoScrollerResetState = remember { mutableStateOf(false) }
 		val coroutineScope = rememberCoroutineScope()
 		val pageState by remember {
 			mutableStateOf(
-				PageState(indexState, items.size, listState, widthState, coroutineScope, animationSpec)
+				PageState(indexState, items.size, infinite, listState, widthState, coroutineScope, animationSpec)
 			)
 		}
-		var offsetX by remember { mutableStateOf(0f) }
 		if (autoScroller.enabled) {
 			LaunchedEffect(Unit) {
 				timer(
@@ -114,8 +122,15 @@ fun <T> XCarousels(
 			state = listState,
 			userScrollEnabled = false
 		) {
-			itemsIndexed(items) { index, item ->
-				content(index, item)
+			items(if (infinite) Int.MAX_VALUE else items.size) {
+				val width = (widthState.value / LocalDensity.current.density).dp
+				Box(
+					modifier = Modifier
+						.let { if (width <= Dp.Hairline) it.fillMaxWidth() else it.width(width) }
+						.fillMaxHeight()
+				) {
+					content(it, items[it % items.size])
+				}
 			}
 		}
 		if (button.enabled) {
@@ -125,16 +140,17 @@ fun <T> XCarousels(
 				autoScrollerResetState = autoScrollerResetState,
 			)
 		}
+		val index = getRealIndex(infinite, items.size, indexState.value) % items.size
 		if (indicator.enabled) {
 			when (indicator.type) {
 				Dot -> XCarouselDotIndicator(
-					index = indexState.value,
+					index = index,
 					count = items.size,
 					indicator = indicator,
 				)
 				
 				Line -> XCarouselLineIndicator(
-					index = indexState.value,
+					index = index,
 					count = items.size,
 					indicator = indicator,
 					horizontalPadding = if (button.enabled && button.alignment == XCarouselButtonAlignment.Bottom) {
@@ -143,7 +159,14 @@ fun <T> XCarousels(
 				)
 			}
 		}
+		addition(index, items[index])
 	}
+}
+
+private fun getRealIndex(infinite: Boolean, count: Int, offset: Int): Int {
+	return if (infinite) {
+		Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % count + offset
+	} else offset
 }
 
 /**
@@ -152,6 +175,7 @@ fun <T> XCarousels(
 private class PageState(
 	val indexState: MutableIntState,
 	private val count: Int,
+	private val infinite: Boolean,
 	private val listState: LazyListState,
 	private val widthState: MutableIntState,
 	private val coroutineScope: CoroutineScope,
@@ -162,14 +186,12 @@ private class PageState(
 		coroutineScope: CoroutineScope = this.coroutineScope,
 	): Boolean {
 		if (listState.isScrollInProgress ||
-			listState.firstVisibleItemIndex >= count - 1 ||
-			indexState.value >= count - 1 ||
+			((listState.firstVisibleItemIndex >= count - 1 || indexState.value >= count - 1) && !infinite) ||
 			widthState.value == -1
 		) return false
 		coroutineScope.launch {
 			indexState.value++
-			val value = (listState.firstVisibleItemScrollOffset + widthState.value - 1) % widthState.value + 1
-			listState.animateScrollBy(value.toFloat(), animationSpec)
+			listState.animateScrollBy(widthState.value.toFloat(), animationSpec)
 		}
 		return true
 	}
@@ -178,14 +200,12 @@ private class PageState(
 		coroutineScope: CoroutineScope = this.coroutineScope,
 	): Boolean {
 		if (listState.isScrollInProgress ||
-			listState.firstVisibleItemIndex <= 0 ||
-			indexState.value <= 0 &&
+			((listState.firstVisibleItemIndex <= 0 || indexState.value <= 0) && !infinite) ||
 			widthState.value == -1
 		) return false
 		coroutineScope.launch {
 			indexState.value--
-			val value = (listState.firstVisibleItemScrollOffset + widthState.value - 1) % widthState.value + 1
-			listState.animateScrollBy(-value.toFloat(), animationSpec)
+			listState.animateScrollBy(-widthState.value.toFloat(), animationSpec)
 		}
 		return true
 	}
@@ -331,7 +351,7 @@ object XCarousels {
 	 */
 	fun indicator(
 		enabled: Boolean = true,
-		type: XCarouselIndicatorType = Dot,
+		type: XCarouselIndicatorType = Line,
 		padding: Dp = 24.dp,
 	): XCarouselIndicator = XCarouselIndicator(enabled, type, padding)
 	
@@ -342,14 +362,6 @@ object XCarousels {
 		enabled: Boolean = true,
 		internal: Long = 5000L,
 	): XCarouselAutoScroller = XCarouselAutoScroller(enabled, internal)
-	
-	/**
-	 * 手势轮播
-	 */
-	fun userScroller(
-		enabled: Boolean = true,
-		critical: Dp = 20.dp,
-	): XCarouselUserScroller = XCarouselUserScroller(enabled, critical)
 }
 
 /**
@@ -402,12 +414,4 @@ enum class XCarouselIndicatorType {
 data class XCarouselAutoScroller internal constructor(
 	val enabled: Boolean,
 	val internal: Long,
-)
-
-/**
- * 轮播图用户手势
- */
-data class XCarouselUserScroller internal constructor(
-	val enabled: Boolean,
-	val critical: Dp,
 )
