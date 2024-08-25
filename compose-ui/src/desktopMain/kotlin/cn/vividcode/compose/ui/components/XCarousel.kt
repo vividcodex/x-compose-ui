@@ -281,7 +281,9 @@ private fun BoxScope.XCarouselDotIndicator(
 	Row(
 		modifier = Modifier
 			.align(Alignment.BottomCenter)
-			.padding(bottom = indicator.padding)
+			.padding(
+				bottom = indicator.padding.calculateBottomPadding()
+			)
 	) {
 		repeat(count) {
 			Spacer(
@@ -312,8 +314,9 @@ private fun BoxScope.XCarouselLineIndicator(
 			.fillMaxWidth()
 			.align(Alignment.BottomCenter)
 			.padding(
-				horizontal = indicator.padding + horizontalPadding,
-				vertical = indicator.padding
+				start = indicator.padding.calculateStartPadding(LayoutDirection.Ltr) + horizontalPadding,
+				end = indicator.padding.calculateEndPadding(LayoutDirection.Ltr) + horizontalPadding,
+				bottom = indicator.padding.calculateBottomPadding(),
 			),
 	) {
 		repeat(count) {
@@ -352,7 +355,7 @@ object XCarousels {
 	fun indicator(
 		enabled: Boolean = true,
 		type: XCarouselIndicatorType = Line,
-		padding: Dp = 24.dp,
+		padding: PaddingValues = PaddingValues(24.dp),
 	): XCarouselIndicator = XCarouselIndicator(enabled, type, padding)
 	
 	/**
@@ -395,7 +398,7 @@ enum class XCarouselButtonAlignment(
 data class XCarouselIndicator internal constructor(
 	val enabled: Boolean,
 	val type: XCarouselIndicatorType,
-	val padding: Dp,
+	val padding: PaddingValues,
 )
 
 /**
