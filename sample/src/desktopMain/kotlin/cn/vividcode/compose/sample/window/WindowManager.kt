@@ -1,16 +1,17 @@
 package cn.vividcode.compose.sample.window
 
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
+import cn.vividcode.compose.sample.GlobalState
 import cn.vividcode.compose.sample.expends.to
-import cn.vividcode.compose.sample.RouteState
+import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 import java.awt.MouseInfo
 
@@ -25,7 +26,7 @@ import java.awt.MouseInfo
  */
 object WindowManager {
 	
-	var windowState by mutableStateOf(getWindowState(RouteState.current.size))
+	var windowState by mutableStateOf(getWindowState(GlobalState.currentRoute.size))
 	
 	private fun getWindowState(size: DpSize): WindowState {
 		val mouseLocation = MouseInfo.getPointerInfo().location
@@ -41,10 +42,13 @@ object WindowManager {
 }
 
 @Composable
-fun WindowZoomAnimate() {
-	val animationSpec = tween<Dp>(durationMillis = 180, easing = LinearEasing)
-	val targetWidth by animateDpAsState(RouteState.current.size.width, animationSpec)
-	val targetHeight by animateDpAsState(RouteState.current.size.height, animationSpec)
+fun FrameWindowScope.WindowZoomAnimate() {
+	val animationSpec = tween<Dp>(durationMillis = 300)
+	val route = GlobalState.currentRoute
+	val targetWidth by animateDpAsState(route.size.width, animationSpec)
+	val targetHeight by animateDpAsState(route.size.height, animationSpec) {
+		setWindowMinSize(route.minSize)
+	}
 	LaunchedEffect(targetWidth, targetHeight) {
 		setWindowSize(targetWidth, targetHeight)
 	}
@@ -53,15 +57,24 @@ fun WindowZoomAnimate() {
 /**
  * 自适用窗口大小
  */
-fun setWindowSize(
+private fun setWindowSize(
 	targetWidth: Dp,
-	targetHeight: Dp
+	targetHeight: Dp,
 ) {
-	WindowManager.windowState.position = WindowManager.windowState.position.let {
-		WindowPosition(
-			x = it.x - (targetWidth - WindowManager.windowState.size.width) / 2f,
-			y = it.y - (targetHeight - WindowManager.windowState.size.height) / 2f,
-		)
-	}
+	val position = WindowManager.windowState.position
+	val size = WindowManager.windowState.size
 	WindowManager.windowState.size = targetWidth to targetHeight
+	WindowManager.windowState.position = WindowPosition(
+		x = position.x - (targetWidth - size.width) / 2f,
+		y = position.y - (targetHeight - size.height) / 2f
+	)
+}
+
+/**
+ * 设置窗口最小值
+ */
+private fun FrameWindowScope.setWindowMinSize(size: DpSize?) {
+	this.window.minimumSize = size?.let {
+		Dimension(it.width.value.toInt(), it.height.value.toInt())
+	}
 }

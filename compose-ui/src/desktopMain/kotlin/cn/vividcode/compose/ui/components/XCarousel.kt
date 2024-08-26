@@ -11,10 +11,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,19 +45,19 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun <T> XCarousel(
-	modifier: Modifier = Modifier.fillMaxSize(),
+	modifier: Modifier = Modifier,
 	items: Array<T>,
 	firstIndex: Int = 0,
 	animationSpec: AnimationSpec<Float> = tween(durationMillis = 400),
-	button: XCarouselButton = XCarousels.button(),
-	indicator: XCarouselIndicator = XCarousels.indicator(),
-	autoScroller: XCarouselAutoScroller = XCarousels.autoScroller(),
+	button: XCarouselButton = XCarouselDefaults.button(),
+	indicator: XCarouselIndicator = XCarouselDefaults.indicator(),
+	autoScroller: XCarouselAutoScroller = XCarouselDefaults.autoScroller(),
 	infinite: Boolean = false,
 	addition: @Composable BoxScope.(index: Int, item: T) -> Unit = { _, _ -> },
 	content: @Composable BoxScope.(index: Int, item: T) -> Unit,
 ) {
 	XCarousels(
-		modifier = modifier,
+		modifier = modifier.fillMaxSize(),
 		items = items.toList(),
 		firstIndex = firstIndex,
 		animationSpec = animationSpec,
@@ -79,9 +79,9 @@ fun <T> XCarousels(
 	items: List<T>,
 	firstIndex: Int = 0,
 	animationSpec: AnimationSpec<Float> = tween(durationMillis = 400),
-	button: XCarouselButton = XCarousels.button(),
-	indicator: XCarouselIndicator = XCarousels.indicator(),
-	autoScroller: XCarouselAutoScroller = XCarousels.autoScroller(),
+	button: XCarouselButton = XCarouselDefaults.button(),
+	indicator: XCarouselIndicator = XCarouselDefaults.indicator(),
+	autoScroller: XCarouselAutoScroller = XCarouselDefaults.autoScroller(),
 	infinite: Boolean = false,
 	addition: @Composable BoxScope.(index: Int, item: T) -> Unit = { _, _ -> },
 	content: @Composable BoxScope.(index: Int, item: T) -> Unit,
@@ -337,7 +337,7 @@ private fun BoxScope.XCarouselLineIndicator(
 /**
  * 轮播图方法
  */
-object XCarousels {
+object XCarouselDefaults {
 	
 	/**
 	 * 按钮

@@ -1,59 +1,57 @@
 package cn.vividcode.compose.sample
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import cn.vividcode.compose.sample.Route.AuthPage
+import cn.vividcode.compose.sample.Route.GuidePage
 import cn.vividcode.compose.sample.Route.HomePage
-import cn.vividcode.compose.sample.auth.AuthPage
-import cn.vividcode.compose.sample.expends.setFullWindowContent
-import cn.vividcode.compose.sample.expends.setMinSize
-import cn.vividcode.compose.sample.expends.setTransparentTitleBar
+import cn.vividcode.compose.sample.expends.CurrentOS
+import cn.vividcode.compose.sample.guide.GuidePage
 import cn.vividcode.compose.sample.home.HomePage
 import cn.vividcode.compose.sample.window.WindowManager
 import cn.vividcode.compose.sample.window.WindowZoomAnimate
 
 fun main() = application {
-	Window(
-		onCloseRequest = ::exitApplication,
-		state = WindowManager.windowState,
-		title = "",
-		resizable = RouteState.current.resizable
-	) {
-		LaunchedEffect(Unit) {
-			setFullWindowContent()
-			setTransparentTitleBar()
-		}
-		LaunchedEffect(RouteState.current) {
-			setMinSize(RouteState.current.minSize)
-		}
-		WindowZoomAnimate()
-		Main()
-	}
-}
-
-@Composable
-private fun Main() {
 	MaterialTheme {
-		Scaffold(
-			modifier = Modifier.fillMaxSize()
-				.background(MaterialTheme.colors.background)
+		Window(
+			onCloseRequest = ::exitApplication,
+			state = WindowManager.windowState,
+			title = "",
+			resizable = GlobalState.currentRoute.resizable
 		) {
-			RouteConfig()
+			this.window.defaultCloseOperation
+			val background = MaterialTheme.colorScheme.background
+			LaunchedEffect(Unit) {
+				initWindow(background)
+			}
+			WindowZoomAnimate()
+			Page()
 		}
 	}
 }
 
+private fun FrameWindowScope.initWindow(
+	background: Color,
+) {
+	if (CurrentOS.isMacOS) {
+		this.window.rootPane.apply {
+			this.putClientProperty("apple.awt.fullWindowContent", true)
+			this.putClientProperty("apple.awt.transparentTitleBar", true)
+			this.putClientProperty("apple.awt.customMenuBar", true)
+		}
+	}
+	this.window.background = java.awt.Color(background.toArgb())
+}
+
 @Composable
-private fun RouteConfig() {
-	when (RouteState.current) {
-		AuthPage -> AuthPage()
+private fun Page() {
+	when (GlobalState.currentRoute) {
+		GuidePage -> GuidePage()
 		HomePage -> HomePage()
 	}
 }

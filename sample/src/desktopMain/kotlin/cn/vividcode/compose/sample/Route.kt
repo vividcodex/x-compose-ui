@@ -1,8 +1,5 @@
 package cn.vividcode.compose.sample
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import cn.vividcode.compose.sample.expends.to
@@ -22,7 +19,7 @@ enum class Route(
 	val minSize: DpSize? = null
 ) {
 	
-	AuthPage(
+	GuidePage(
 		size = 600.dp to 450.dp,
 		resizable = false
 	),
@@ -30,11 +27,6 @@ enum class Route(
 	HomePage(
 		size = 900.dp to 700.dp,
 		resizable = true,
-		minSize = 500.dp to 350.dp
+		minSize = 900.dp to 700.dp
 	)
-}
-
-object RouteState {
-	
-	var current by mutableStateOf(Route.AuthPage)
 }
