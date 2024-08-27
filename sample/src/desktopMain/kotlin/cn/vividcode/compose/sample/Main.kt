@@ -13,11 +13,13 @@ import cn.vividcode.compose.sample.Route.HomePage
 import cn.vividcode.compose.sample.expends.CurrentOS
 import cn.vividcode.compose.sample.guide.GuidePage
 import cn.vividcode.compose.sample.home.HomePage
+import cn.vividcode.compose.sample.theme.DynamicTheme
+import cn.vividcode.compose.sample.theme.SystemInDarkThemeChangeListener
 import cn.vividcode.compose.sample.window.WindowManager
 import cn.vividcode.compose.sample.window.WindowZoomAnimate
 
 fun main() = application {
-	MaterialTheme {
+	DynamicTheme {
 		Window(
 			onCloseRequest = ::exitApplication,
 			state = WindowManager.windowState,
@@ -29,6 +31,7 @@ fun main() = application {
 			LaunchedEffect(Unit) {
 				initWindow(background)
 			}
+			SystemInDarkThemeChangeListener()
 			WindowZoomAnimate()
 			Page()
 		}

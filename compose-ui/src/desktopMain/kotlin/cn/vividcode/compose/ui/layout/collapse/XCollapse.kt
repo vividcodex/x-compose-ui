@@ -1,4 +1,4 @@
-package cn.vividcode.compose.ui.layout
+package cn.vividcode.compose.ui.layout.collapse
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 fun XCollapse(
 	visibleState: MutableState<Boolean> = remember { mutableStateOf(false) },
 	collapse: @Composable BoxScope.() -> Unit,
-	collapseClip: Shape = RoundedCornerShape(6.dp),
+	collapseClip: Shape = RoundedCornerShape(8.dp),
 	content: @Composable BoxScope.() -> Unit,
 ) {
 	Column(
@@ -48,7 +48,7 @@ fun XCollapse(
 				}
 		) {
 			content()
-			val degrees by animateFloatAsState(if (!visibleState.value) 0f else 90f)
+			val degrees by animateFloatAsState(if (visibleState.value) 0f else 90f)
 			Icon(
 				imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
 				contentDescription = null,

@@ -1,4 +1,4 @@
-package cn.vividcode.compose.ui.foundation
+package cn.vividcode.compose.ui.foundation.icon
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding

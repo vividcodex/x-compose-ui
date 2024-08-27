@@ -11,9 +11,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cn.vividcode.compose.sample.Route
 import cn.vividcode.compose.sample.routeTo
-import cn.vividcode.compose.ui.components.XCarousel
-import cn.vividcode.compose.ui.components.XCarouselDefaults
-import cn.vividcode.compose.ui.foundation.XButton
+import cn.vividcode.compose.ui.components.carousel.XCarousel
+import cn.vividcode.compose.ui.components.carousel.XCarouselDefaults
+import cn.vividcode.compose.ui.foundation.button.XButton
 import org.jetbrains.compose.resources.painterResource
 import x_compose_ui.sample.generated.resources.*
 

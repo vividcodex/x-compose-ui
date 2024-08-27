@@ -15,15 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.WindowPlacement
 import cn.vividcode.compose.sample.GlobalState
 import cn.vividcode.compose.sample.showSnackbar
-import cn.vividcode.compose.sample.window.WindowManager
-import cn.vividcode.compose.ui.layout.XCollapse
-import cn.vividcode.compose.ui.layout.XSidebar
+import cn.vividcode.compose.ui.layout.collapse.XCollapse
+import cn.vividcode.compose.ui.layout.sidebar.XSidebar
 
 /**
  * 项目名称：vividcode-compose
@@ -51,8 +48,6 @@ fun HomePage() {
 			sidebar = {
 				HomeSidebar(homeRouteState)
 			},
-			sidebarTop = if (WindowManager.windowState.placement == WindowPlacement.Floating)
-				20.dp else Dp.Hairline
 		) {
 			HomeContent(homeRouteState)
 		}
@@ -65,7 +60,7 @@ private fun HomeSidebar(
 ) {
 	Column(
 		modifier = Modifier
-			.padding(top = 12.dp)
+			.padding(top = 20.dp)
 			.padding(horizontal = 12.dp)
 			.fillMaxSize()
 	) {
@@ -123,16 +118,16 @@ private fun Item(
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(42.dp)
+			.height(32.dp)
 			.clip(RoundedCornerShape(6.dp))
-			.background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
+			.background(if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
 			.clickable {
 				homeRouteState.value = homeRoute
 			}
 			.padding(horizontal = 12.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		val color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+		val color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
 		Text(
 			text = homeRoute.name,
 			fontSize = 15.sp,
@@ -143,7 +138,7 @@ private fun Item(
 		Text(
 			text = homeRoute.chinese,
 			fontSize = 13.sp,
-			color = color,
+			color = color.copy(alpha = 0.6f),
 			fontWeight = FontWeight.Light
 		)
 	}

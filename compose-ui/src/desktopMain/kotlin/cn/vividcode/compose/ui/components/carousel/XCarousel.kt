@@ -1,4 +1,4 @@
-package cn.vividcode.compose.ui.components
+package cn.vividcode.compose.ui.components.carousel
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,8 +27,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import cn.vividcode.compose.ui.components.XCarouselIndicatorType.Dot
-import cn.vividcode.compose.ui.components.XCarouselIndicatorType.Line
+import cn.vividcode.compose.ui.components.carousel.XCarouselIndicatorType.Dot
+import cn.vividcode.compose.ui.components.carousel.XCarouselIndicatorType.Line
 import cn.vividcode.compose.ui.utils.timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -292,7 +291,7 @@ private fun BoxScope.XCarouselDotIndicator(
 					.size(8.dp)
 					.clip(CircleShape)
 					.background(
-						color = if (index == it) MaterialTheme.colorScheme.surface else Color.White.copy(alpha = 0.4f),
+						color = if (index == it) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.4f),
 					)
 			)
 		}
@@ -327,7 +326,7 @@ private fun BoxScope.XCarouselLineIndicator(
 					.padding(horizontal = 4.dp)
 					.clip(RoundedCornerShape(1.dp))
 					.background(
-						color = if (index == it) MaterialTheme.colorScheme.surface else Color.White.copy(alpha = 0.4f),
+						color = if (index == it) Color.White.copy(0.9f) else Color.White.copy(alpha = 0.4f),
 					)
 			)
 		}
