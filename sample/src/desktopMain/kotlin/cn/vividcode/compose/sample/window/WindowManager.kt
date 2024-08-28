@@ -1,16 +1,18 @@
 package cn.vividcode.compose.sample.window
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.runtime.*
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import cn.vividcode.compose.sample.GlobalState
-import cn.vividcode.compose.sample.expends.to
+import cn.vividcode.compose.sample.expends.toDpSize
+import cn.vividcode.compose.sample.expends.toSize
 import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 import java.awt.MouseInfo
@@ -43,14 +45,13 @@ object WindowManager {
 
 @Composable
 fun FrameWindowScope.WindowZoomAnimate() {
-	val animationSpec = tween<Dp>(durationMillis = 300)
-	val route = GlobalState.currentRoute
-	val targetWidth by animateDpAsState(route.size.width, animationSpec)
-	val targetHeight by animateDpAsState(route.size.height, animationSpec) {
-		setWindowMinSize(route.minSize)
-	}
-	LaunchedEffect(targetWidth, targetHeight) {
-		setWindowSize(targetWidth, targetHeight)
+	val density = LocalDensity.current
+	val targetSize by animateSizeAsState(
+		targetValue = GlobalState.currentRoute.size.toSize(),
+		finishedListener = { setWindowMinSize(it, density) }
+	)
+	LaunchedEffect(targetSize) {
+		setWindowSize(targetSize, density)
 	}
 }
 
@@ -58,23 +59,24 @@ fun FrameWindowScope.WindowZoomAnimate() {
  * 自适用窗口大小
  */
 private fun setWindowSize(
-	targetWidth: Dp,
-	targetHeight: Dp,
+	targetSize: Size,
+	density: Density,
 ) {
 	val position = WindowManager.windowState.position
 	val size = WindowManager.windowState.size
-	WindowManager.windowState.size = targetWidth to targetHeight
+	val targetDpSize = targetSize.toDpSize(density)
+	WindowManager.windowState.size = targetDpSize
 	WindowManager.windowState.position = WindowPosition(
-		x = position.x - (targetWidth - size.width) / 2f,
-		y = position.y - (targetHeight - size.height) / 2f
+		x = position.x - (targetDpSize.width - size.width) / 2f,
+		y = position.y - (targetDpSize.height - size.height) / 2f
 	)
 }
 
 /**
  * 设置窗口最小值
  */
-private fun FrameWindowScope.setWindowMinSize(size: DpSize?) {
-	this.window.minimumSize = size?.let {
+private fun FrameWindowScope.setWindowMinSize(size: Size?, density: Density) {
+	this.window.minimumSize = size?.toDpSize(density)?.let {
 		Dimension(it.width.value.toInt(), it.height.value.toInt())
 	}
 }

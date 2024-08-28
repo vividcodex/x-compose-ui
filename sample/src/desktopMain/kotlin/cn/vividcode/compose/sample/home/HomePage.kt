@@ -1,13 +1,15 @@
 package cn.vividcode.compose.sample.home
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cn.vividcode.compose.sample.GlobalState
-import cn.vividcode.compose.sample.showSnackbar
+import cn.vividcode.compose.sample.theme.ColorMode
+import cn.vividcode.compose.sample.theme.DynamicThemeState
+import cn.vividcode.compose.ui.foundation.icon.XIcon
 import cn.vividcode.compose.ui.layout.collapse.XCollapse
 import cn.vividcode.compose.ui.layout.sidebar.XSidebar
 
@@ -38,16 +42,30 @@ fun HomePage() {
 			.fillMaxSize(),
 		snackbarHost = {
 			SnackbarHost(GlobalState.snackbarHostState)
-		}
+		},
+		floatingActionButton = {
+			val rotate by animateFloatAsState(
+				targetValue = if (DynamicThemeState.isDarkTheme) 0f else 30f,
+				animationSpec = spring(stiffness = 1000f)
+			)
+			XIcon(
+				icon = if (DynamicThemeState.isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
+				size = 44.dp,
+				rotate = rotate,
+				tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
+				backgroundColor = MaterialTheme.colorScheme.primaryContainer
+			) {
+				DynamicThemeState.currentMode = if (DynamicThemeState.isDarkTheme) ColorMode.Light else ColorMode.Dark
+			}
+		},
+		floatingActionButtonPosition = FabPosition.Start
 	) {
-		LaunchedEffect(Unit) {
-			showSnackbar("开始学习")
-		}
 		val homeRouteState = remember { mutableStateOf(HomeRoute.Carousel) }
 		XSidebar(
+			modifier = Modifier.padding(it),
 			sidebar = {
 				HomeSidebar(homeRouteState)
-			},
+			}
 		) {
 			HomeContent(homeRouteState)
 		}

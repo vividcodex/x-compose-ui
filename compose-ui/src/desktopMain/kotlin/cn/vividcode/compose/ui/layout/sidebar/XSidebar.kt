@@ -2,22 +2,22 @@ package cn.vividcode.compose.ui.layout.sidebar
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
+import cn.vividcode.compose.ui.foundation.icon.XIcon
 
 /**
  * 项目名称：x-compose-ui
@@ -30,20 +30,20 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun XSidebar(
+	modifier: Modifier = Modifier,
 	sidebarState: MutableState<Boolean> = remember { mutableStateOf(false) },
 	sidebarWidth: Dp = 250.dp,
 	sidebar: @Composable BoxScope.() -> Unit,
+	fixedContent: @Composable BoxScope.() -> Unit = {},
 	content: @Composable BoxScope.() -> Unit,
 ) {
 	var showOpenButton by remember { mutableStateOf(false) }
 	var showCloseButton by remember { mutableStateOf(false) }
 	var height by remember { mutableStateOf(0) }
 	Box(
-		modifier = Modifier
+		modifier = modifier
 			.fillMaxSize()
-			.onGloballyPositioned {
-				height = it.size.height
-			}
+			.onGloballyPositioned { height = it.size.height }
 			.pointerInput(Unit) {
 				awaitPointerEventScope {
 					while (true) {
@@ -84,6 +84,7 @@ fun XSidebar(
 				sidebarState = sidebarState
 			)
 		}
+		fixedContent()
 	}
 }
 
@@ -92,27 +93,21 @@ private fun BoxScope.OpenButton(
 	visible: Boolean,
 	sidebarState: MutableState<Boolean>,
 ) {
-	val width by animateDpAsState(if (visible) 25.dp else Dp.Hairline)
-	Box(
+	val offsetX by animateDpAsState(if (visible) 20.dp else -(60.dp))
+	XIcon(
 		modifier = Modifier
 			.align(Alignment.CenterStart)
-			.width(width)
-			.height(100.dp)
-			.clip(RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp))
-			.background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.8f))
-			.clickable {
-				if (!sidebarState.value) {
-					sidebarState.value = true
-				}
-			},
-		contentAlignment = Alignment.Center
+			.offset(x = max(Dp.Hairline, offsetX)),
+		icon = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+		size = 60.dp + min(Dp.Hairline, offsetX),
+		padding = 10.dp,
+		clip = CircleShape,
+		tintColor = MaterialTheme.colorScheme.onSurface,
+		backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest
 	) {
-		Icon(
-			imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-			contentDescription = null,
-			modifier = Modifier.size(28.dp),
-			tint = MaterialTheme.colorScheme.onSurface
-		)
+		if (!sidebarState.value) {
+			sidebarState.value = true
+		}
 	}
 }
 
@@ -121,26 +116,20 @@ private fun BoxScope.CloseButton(
 	visible: Boolean,
 	sidebarState: MutableState<Boolean>,
 ) {
-	val width by animateDpAsState(if (visible) 25.dp else Dp.Hairline)
-	Box(
+	val offsetX by animateDpAsState(if (visible) (-20).dp else 60.dp)
+	XIcon(
 		modifier = Modifier
 			.align(Alignment.CenterEnd)
-			.width(width)
-			.height(100.dp)
-			.clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
-			.background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.8f))
-			.clickable {
-				if (sidebarState.value) {
-					sidebarState.value = false
-				}
-			},
-		contentAlignment = Alignment.Center
+			.offset(x = min(Dp.Hairline, offsetX)),
+		icon = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+		size = min(60.dp, 60.dp - offsetX),
+		padding = 10.dp,
+		clip = CircleShape,
+		tintColor = MaterialTheme.colorScheme.onSurfaceVariant,
+		backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest
 	) {
-		Icon(
-			imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-			contentDescription = null,
-			modifier = Modifier.size(28.dp),
-			tint = MaterialTheme.colorScheme.onSurfaceVariant
-		)
+		if (sidebarState.value) {
+			sidebarState.value = false
+		}
 	}
 }

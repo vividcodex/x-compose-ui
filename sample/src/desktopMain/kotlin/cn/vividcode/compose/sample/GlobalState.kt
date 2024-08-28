@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
  */
 object GlobalState {
 	
-	var currentRoute by mutableStateOf(Route.GuidePage)
+	var currentRoute by mutableStateOf(Route.HomePage)
 	
 	val snackbarHostState = SnackbarHostState()
 }

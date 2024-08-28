@@ -8,13 +8,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import cn.vividcode.compose.sample.Route.GuidePage
 import cn.vividcode.compose.sample.Route.HomePage
 import cn.vividcode.compose.sample.expends.CurrentOS
-import cn.vividcode.compose.sample.guide.GuidePage
 import cn.vividcode.compose.sample.home.HomePage
 import cn.vividcode.compose.sample.theme.DynamicTheme
-import cn.vividcode.compose.sample.theme.SystemInDarkThemeChangeListener
 import cn.vividcode.compose.sample.window.WindowManager
 import cn.vividcode.compose.sample.window.WindowZoomAnimate
 
@@ -31,7 +28,6 @@ fun main() = application {
 			LaunchedEffect(Unit) {
 				initWindow(background)
 			}
-			SystemInDarkThemeChangeListener()
 			WindowZoomAnimate()
 			Page()
 		}
@@ -54,7 +50,6 @@ private fun FrameWindowScope.initWindow(
 @Composable
 private fun Page() {
 	when (GlobalState.currentRoute) {
-		GuidePage -> GuidePage()
 		HomePage -> HomePage()
 	}
 }

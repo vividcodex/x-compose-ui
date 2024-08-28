@@ -16,13 +16,8 @@ import cn.vividcode.compose.sample.expends.to
 enum class Route(
 	val size: DpSize,
 	val resizable: Boolean,
-	val minSize: DpSize? = null
+	val minSize: DpSize? = null,
 ) {
-	
-	GuidePage(
-		size = 600.dp to 450.dp,
-		resizable = false
-	),
 	
 	HomePage(
 		size = 900.dp to 700.dp,
