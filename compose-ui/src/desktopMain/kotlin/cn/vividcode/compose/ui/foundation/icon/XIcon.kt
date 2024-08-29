@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import cn.vividcode.compose.ui.utils.enabled
 
 /**
  * 项目名称：x-compose-ui
@@ -28,24 +30,36 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun XIcon(
-	modifier: Modifier = Modifier,
 	icon: ImageVector,
-	size: Dp = 40.dp,
+	modifier: Modifier = Modifier,
+	size: Dp = 44.dp,
 	padding: Dp = (size - size / 1.5f) / 2f,
-	clip: Shape = RoundedCornerShape(size / 4),
+	clip: Shape = RoundedCornerShape(size / 3),
 	rotate: Float = 0f,
 	tintColor: Color = MaterialTheme.colorScheme.primary,
 	backgroundColor: Color = Color.Transparent,
-	onClick: () -> Unit,
+	shadowColor: Color = MaterialTheme.colorScheme.primary,
+	shadowElevation: Dp = 0.dp,
+	onClick: (() -> Unit)? = null,
 ) {
 	Icon(
 		imageVector = icon,
 		contentDescription = null,
 		modifier = modifier
+			.enabled(shadowElevation > 0.dp) {
+				this.shadow(
+					elevation = shadowElevation,
+					shape = clip,
+					ambientColor = shadowColor,
+					spotColor = shadowColor
+				)
+			}
 			.size(size)
 			.clip(clip)
 			.background(backgroundColor)
-			.clickable(onClick = onClick)
+			.enabled(onClick != null) {
+				this.clickable { onClick?.invoke() }
+			}
 			.padding(padding)
 			.rotate(rotate),
 		tint = tintColor

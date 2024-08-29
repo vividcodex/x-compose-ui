@@ -3,28 +3,24 @@ package cn.vividcode.compose.sample.home
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cn.vividcode.compose.sample.GlobalState
 import cn.vividcode.compose.sample.theme.ColorMode
 import cn.vividcode.compose.sample.theme.DynamicThemeState
 import cn.vividcode.compose.ui.foundation.icon.XIcon
-import cn.vividcode.compose.ui.layout.collapse.XCollapse
 import cn.vividcode.compose.ui.layout.sidebar.XSidebar
+import cn.vividcode.compose.ui.layout.tree.XTree
 
 /**
  * 项目名称：vividcode-compose
@@ -45,126 +41,72 @@ fun HomePage() {
 		},
 		floatingActionButton = {
 			val rotate by animateFloatAsState(
-				targetValue = if (DynamicThemeState.isDarkTheme) 0f else 30f,
+				targetValue = if (DynamicThemeState.isDarkTheme) -90f else 0f,
 				animationSpec = spring(stiffness = 1000f)
 			)
 			XIcon(
-				icon = if (DynamicThemeState.isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
-				size = 44.dp,
+				icon = if (DynamicThemeState.isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
 				rotate = rotate,
 				tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
-				backgroundColor = MaterialTheme.colorScheme.primaryContainer
+				backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+				shadowElevation = 4.dp
 			) {
 				DynamicThemeState.currentMode = if (DynamicThemeState.isDarkTheme) ColorMode.Light else ColorMode.Dark
 			}
 		},
 		floatingActionButtonPosition = FabPosition.Start
 	) {
-		val homeRouteState = remember { mutableStateOf(HomeRoute.Carousel) }
 		XSidebar(
 			modifier = Modifier.padding(it),
 			sidebar = {
-				HomeSidebar(homeRouteState)
+				XTree(
+					groups = HomeItem.treeGroups,
+					itemState = HomeState.itemState,
+					modifier = Modifier.padding(top = 36.dp)
+				)
 			}
 		) {
-			HomeContent(homeRouteState)
+			Content()
 		}
 	}
 }
 
 @Composable
-private fun HomeSidebar(
-	homeRouteState: MutableState<HomeRoute>,
-) {
-	Column(
-		modifier = Modifier
-			.padding(top = 20.dp)
-			.padding(horizontal = 12.dp)
-			.fillMaxSize()
-	) {
-		HomeRoute.entries.groupBy { it.group }.forEach { (group, routes) ->
-			val visibleState = remember { mutableStateOf(true) }
-			Spacer(modifier = Modifier.height(12.dp))
-			XCollapse(
-				visibleState = visibleState,
-				collapse = {
-					Column(
-						modifier = Modifier.fillMaxWidth()
-					) {
-						routes.forEach {
-							Item(
-								homeRoute = it,
-								homeRouteState = homeRouteState
-							)
-						}
-					}
-				}
-			) {
-				Title(group)
-			}
-		}
+private fun Content() {
+	Column {
+		TitleBar()
 	}
 }
 
 @Composable
-private fun Title(
-	group: Group,
-) {
+private fun TitleBar() {
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
-			.height(32.dp)
-			.padding(horizontal = 12.dp),
+			.height(70.dp)
+			.shadow(
+				elevation = 4.dp,
+				spotColor = MaterialTheme.colorScheme.primary,
+				ambientColor = MaterialTheme.colorScheme.primary
+			)
+			.background(MaterialTheme.colorScheme.background)
+			.padding(horizontal = 16.dp),
 		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.End,
 	) {
+		val item = HomeState.itemState.value
+		if (item.icon != null) {
+			XIcon(
+				icon = item.icon!!,
+				size = 24.dp,
+				padding = Dp.Hairline,
+				tintColor = MaterialTheme.colorScheme.primary,
+			)
+			Spacer(modifier = Modifier.width(8.dp))
+		}
 		Text(
-			text = group.chinese,
-			fontSize = 13.sp,
-			color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-			textAlign = TextAlign.Center,
-			fontWeight = FontWeight.Light
+			text = item.alias ?: item.name,
+			color = MaterialTheme.colorScheme.primary
 		)
 	}
-}
-
-@Composable
-private fun Item(
-	homeRoute: HomeRoute,
-	homeRouteState: MutableState<HomeRoute>,
-) {
-	val selected = homeRouteState.value == homeRoute
-	Row(
-		modifier = Modifier
-			.fillMaxWidth()
-			.height(32.dp)
-			.clip(RoundedCornerShape(6.dp))
-			.background(if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-			.clickable {
-				homeRouteState.value = homeRoute
-			}
-			.padding(horizontal = 12.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		val color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-		Text(
-			text = homeRoute.name,
-			fontSize = 15.sp,
-			color = color,
-			fontWeight = FontWeight.Light
-		)
-		Spacer(modifier = Modifier.weight(1f))
-		Text(
-			text = homeRoute.chinese,
-			fontSize = 13.sp,
-			color = color.copy(alpha = 0.6f),
-			fontWeight = FontWeight.Light
-		)
-	}
-}
-
-@Composable
-private fun HomeContent(
-	homeRouteState: MutableState<HomeRoute>,
-) {
-	Text(homeRouteState.value.name)
 }

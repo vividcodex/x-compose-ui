@@ -5,16 +5,16 @@ import androidx.compose.ui.Modifier
 /**
  * 是否启用 Modifier
  */
-fun Modifier.enabled(enabled: Boolean, modifier: Modifier.() -> Modifier): Modifier {
-	return if (enabled) {
-		this then modifier()
-	} else this
-}
+fun Modifier.enabled(
+	enabled: Boolean,
+	modifier: Modifier.() -> Modifier,
+): Modifier = if (enabled) this.modifier() else this
 
+/**
+ * 逻辑判断
+ */
 fun Modifier.judge(
 	judge: Boolean,
 	whenTrue: Modifier.() -> Modifier,
 	whenFalse: Modifier.() -> Modifier,
-): Modifier {
-	return this then if (judge) whenTrue() else whenFalse()
-}
+): Modifier = if (judge) this.whenTrue() else this.whenFalse()

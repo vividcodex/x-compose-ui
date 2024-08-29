@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
@@ -31,8 +32,8 @@ import cn.vividcode.compose.ui.foundation.icon.XIcon
 @Composable
 fun XSidebar(
 	modifier: Modifier = Modifier,
-	sidebarState: MutableState<Boolean> = remember { mutableStateOf(false) },
-	sidebarWidth: Dp = 250.dp,
+	sidebarState: MutableState<Boolean> = remember { mutableStateOf(true) },
+	sidebarWidth: Dp = 240.dp,
 	sidebar: @Composable BoxScope.() -> Unit,
 	fixedContent: @Composable BoxScope.() -> Unit = {},
 	content: @Composable BoxScope.() -> Unit,
@@ -49,12 +50,9 @@ fun XSidebar(
 					while (true) {
 						val event = awaitPointerEvent()
 						val position = event.changes.first().position
-						showOpenButton = !sidebarState.value &&
-							position.x in 0f .. 75.dp.toPx() &&
-							position.y in height / 2f - 100.dp.toPx() .. height / 2f + 100.dp.toPx()
-						showCloseButton = sidebarState.value &&
-							position.x in (sidebarWidth - 75.dp).toPx() .. sidebarWidth.toPx() &&
-							position.y in height / 2f - 100.dp.toPx() .. height / 2f + 100.dp.toPx()
+						val inY = position.y in height / 2f - 70.dp.toPx() .. height / 2f + 70.dp.toPx()
+						showOpenButton = !sidebarState.value && inY && position.x in 0f .. 120.dp.toPx()
+						showCloseButton = sidebarState.value && inY && position.x in (sidebarWidth - 80.dp).toPx() .. sidebarWidth.toPx()
 					}
 				}
 			}
@@ -76,6 +74,11 @@ fun XSidebar(
 			modifier = Modifier
 				.padding(start = offsetX)
 				.fillMaxSize()
+				.shadow(
+					elevation = 4.dp,
+					spotColor = MaterialTheme.colorScheme.primary,
+					ambientColor = MaterialTheme.colorScheme.primary
+				)
 				.background(MaterialTheme.colorScheme.surface)
 		) {
 			content()
@@ -95,15 +98,15 @@ private fun BoxScope.OpenButton(
 ) {
 	val offsetX by animateDpAsState(if (visible) 20.dp else -(60.dp))
 	XIcon(
+		icon = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
 		modifier = Modifier
 			.align(Alignment.CenterStart)
 			.offset(x = max(Dp.Hairline, offsetX)),
-		icon = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
 		size = 60.dp + min(Dp.Hairline, offsetX),
-		padding = 10.dp,
 		clip = CircleShape,
-		tintColor = MaterialTheme.colorScheme.onSurface,
-		backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest
+		tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
+		backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+		shadowElevation = 2.dp
 	) {
 		if (!sidebarState.value) {
 			sidebarState.value = true
@@ -118,15 +121,15 @@ private fun BoxScope.CloseButton(
 ) {
 	val offsetX by animateDpAsState(if (visible) (-20).dp else 60.dp)
 	XIcon(
+		icon = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
 		modifier = Modifier
 			.align(Alignment.CenterEnd)
 			.offset(x = min(Dp.Hairline, offsetX)),
-		icon = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
 		size = min(60.dp, 60.dp - offsetX),
-		padding = 10.dp,
 		clip = CircleShape,
-		tintColor = MaterialTheme.colorScheme.onSurfaceVariant,
-		backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest
+		tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
+		backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+		shadowElevation = 4.dp
 	) {
 		if (sidebarState.value) {
 			sidebarState.value = false

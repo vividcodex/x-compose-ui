@@ -46,7 +46,9 @@ private val animationSpec = spring<Color>(stiffness = 1000f)
 
 @Composable
 private fun animateColorScheme(colorScheme: ColorScheme): ColorScheme {
-	val primary by animateColorAsState(colorScheme.primary, animationSpec)
+	val primary by animateColorAsState(colorScheme.primary, animationSpec) {
+		DynamicThemeState.triggerChangeBackgroundColor = !DynamicThemeState.triggerChangeBackgroundColor
+	}
 	val onPrimary by animateColorAsState(colorScheme.onPrimary, animationSpec)
 	val primaryContainer by animateColorAsState(colorScheme.primaryContainer, animationSpec)
 	val onPrimaryContainer by animateColorAsState(colorScheme.onPrimaryContainer, animationSpec)
@@ -125,6 +127,8 @@ object DynamicThemeState {
 	var currentMode by mutableStateOf(System)
 	
 	var isDarkTheme by mutableStateOf(false)
+	
+	var triggerChangeBackgroundColor by mutableStateOf(false)
 }
 
 enum class ColorMode {

@@ -75,8 +75,9 @@ private fun setWindowSize(
 /**
  * 设置窗口最小值
  */
-private fun FrameWindowScope.setWindowMinSize(size: Size?, density: Density) {
-	this.window.minimumSize = size?.toDpSize(density)?.let {
+fun FrameWindowScope.setWindowMinSize(size: Size?, density: Density) {
+	if (size == null) return
+	this.window.minimumSize = size.toDpSize(density).let {
 		Dimension(it.width.value.toInt(), it.height.value.toInt())
 	}
 }
