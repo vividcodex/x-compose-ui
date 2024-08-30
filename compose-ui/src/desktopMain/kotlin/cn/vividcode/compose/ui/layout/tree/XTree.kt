@@ -41,14 +41,14 @@ fun XTree(
 	groups: List<XTreeGroup>,
 	itemState: MutableState<XTreeItem>,
 	modifier: Modifier = Modifier,
-	itemHeight: Dp = 34.dp,
-	itemColor: Color = MaterialTheme.colorScheme.outline,
-	selectedItemColor: Color = MaterialTheme.colorScheme.onPrimary,
-	selectedItemBackgroundColor: Color = MaterialTheme.colorScheme.primary,
-	groupItemColor: Color = MaterialTheme.colorScheme.primary,
-	lineColor: Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-	selectedLineColor: Color = MaterialTheme.colorScheme.onPrimary,
-	itemShape: Shape = RoundedCornerShape(itemHeight / 3),
+	itemHeight: Dp = XTreeDefaults.ItemHeight,
+	itemColor: Color = XTreeDefaults.ItemColor,
+	selectedItemColor: Color = XTreeDefaults.SelectedItemColor,
+	selectedItemBackgroundColor: Color = XTreeDefaults.SelectedItemBackgroundColor,
+	groupItemColor: Color = XTreeDefaults.GroupItemColor,
+	lineColor: Color = XTreeDefaults.LineColor,
+	selectedLineColor: Color = XTreeDefaults.SelectedLineColor,
+	itemShape: Shape = XTreeDefaults.itemShape(itemHeight),
 ) {
 	Column(
 		modifier = Modifier
@@ -72,7 +72,7 @@ fun XTree(
 					icon = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
 					size = 20.dp,
 					padding = Dp.Hairline,
-					rotate = rotate,
+					rotateDegree = rotate,
 				)
 				Spacer(modifier = Modifier.width(2.dp))
 				Box(
@@ -108,6 +108,38 @@ fun XTree(
 			}
 		}
 	}
+}
+
+object XTreeDefaults {
+	
+	val ItemHeight = 34.dp
+	
+	val ItemColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.outline
+	
+	val SelectedItemColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.onPrimary
+	
+	val SelectedItemBackgroundColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.primary
+	
+	val GroupItemColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.primary
+	
+	val LineColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+	
+	val SelectedLineColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.onPrimary
+	
+	@Composable
+	fun itemShape(itemHeight: Dp): Shape = RoundedCornerShape(itemHeight / 6)
 }
 
 @Composable
@@ -187,7 +219,7 @@ private fun XTreeGroup(
 						text = it.name,
 						fontSize = 11.sp,
 						fontWeight = FontWeight.Light,
-						color = itemColor
+						color = itemColor.copy(alpha = 0.75f)
 					)
 				}
 			}
@@ -266,16 +298,6 @@ private fun XItem(
 		}
 		Spacer(modifier = Modifier.weight(1f))
 		
-		if (item.icon != null) {
-			Spacer(modifier = Modifier.width(4.dp))
-			XIcon(
-				icon = item.icon,
-				size = 17.dp,
-				padding = Dp.Hairline,
-				tintColor = if (itemState.value == item) selectedItemColor.copy(alpha = 0.75f) else itemColor.copy(alpha = 0.75f)
-			)
-		}
-		
 		if (item.alias != null) {
 			Spacer(modifier = Modifier.width(4.dp))
 			Box(
@@ -291,6 +313,16 @@ private fun XItem(
 					color = if (itemState.value == item) selectedItemColor.copy(alpha = 0.75f) else itemColor.copy(alpha = 0.75f),
 				)
 			}
+		}
+		
+		if (item.icon != null) {
+			Spacer(modifier = Modifier.width(4.dp))
+			XIcon(
+				icon = item.icon,
+				size = 17.dp,
+				padding = Dp.Hairline,
+				tintColor = if (itemState.value == item) selectedItemColor.copy(alpha = 0.75f) else itemColor.copy(alpha = 0.75f)
+			)
 		}
 	}
 }

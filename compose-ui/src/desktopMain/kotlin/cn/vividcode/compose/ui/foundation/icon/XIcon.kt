@@ -32,14 +32,14 @@ import cn.vividcode.compose.ui.utils.enabled
 fun XIcon(
 	icon: ImageVector,
 	modifier: Modifier = Modifier,
-	size: Dp = 44.dp,
-	padding: Dp = (size - size / 1.5f) / 2f,
-	clip: Shape = RoundedCornerShape(size / 3),
-	rotate: Float = 0f,
-	tintColor: Color = MaterialTheme.colorScheme.primary,
-	backgroundColor: Color = Color.Transparent,
-	shadowColor: Color = MaterialTheme.colorScheme.primary,
-	shadowElevation: Dp = 0.dp,
+	size: Dp = XIconDefaults.Size,
+	shape: Shape = XIconDefaults.shape(size),
+	padding: Dp = XIconDefaults.padding(size),
+	rotateDegree: Float = XIconDefaults.ROTATE_DEGREE,
+	tintColor: Color = XIconDefaults.TintColor,
+	backgroundColor: Color = XIconDefaults.BackgroundColor,
+	shadowColor: Color = XIconDefaults.ShadowColor,
+	shadowElevation: Dp = XIconDefaults.ShadowElevation,
 	onClick: (() -> Unit)? = null,
 ) {
 	Icon(
@@ -49,19 +49,42 @@ fun XIcon(
 			.enabled(shadowElevation > 0.dp) {
 				this.shadow(
 					elevation = shadowElevation,
-					shape = clip,
+					shape = shape,
 					ambientColor = shadowColor,
 					spotColor = shadowColor
 				)
 			}
 			.size(size)
-			.clip(clip)
+			.clip(shape)
 			.background(backgroundColor)
 			.enabled(onClick != null) {
 				this.clickable { onClick?.invoke() }
 			}
 			.padding(padding)
-			.rotate(rotate),
+			.rotate(rotateDegree),
 		tint = tintColor
 	)
+}
+
+object XIconDefaults {
+	
+	val Size = 44.dp
+	
+	fun padding(size: Dp): Dp = (size - size / 1.5f) / 2f
+	
+	fun shape(size: Dp): Shape = RoundedCornerShape(size / 4f)
+	
+	const val ROTATE_DEGREE = 0f
+	
+	val TintColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.primary
+	
+	val BackgroundColor = Color.Transparent
+	
+	val ShadowColor: Color
+		@Composable
+		get() = MaterialTheme.colorScheme.primary
+	
+	val ShadowElevation = Dp.Hairline
 }

@@ -103,7 +103,7 @@ private fun BoxScope.OpenButton(
 			.align(Alignment.CenterStart)
 			.offset(x = max(Dp.Hairline, offsetX)),
 		size = 60.dp + min(Dp.Hairline, offsetX),
-		clip = CircleShape,
+		shape = CircleShape,
 		tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
 		backgroundColor = MaterialTheme.colorScheme.primaryContainer,
 		shadowElevation = 2.dp
@@ -126,7 +126,7 @@ private fun BoxScope.CloseButton(
 			.align(Alignment.CenterEnd)
 			.offset(x = min(Dp.Hairline, offsetX)),
 		size = min(60.dp, 60.dp - offsetX),
-		clip = CircleShape,
+		shape = CircleShape,
 		tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
 		backgroundColor = MaterialTheme.colorScheme.primaryContainer,
 		shadowElevation = 2.dp

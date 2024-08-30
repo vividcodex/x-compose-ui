@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import cn.vividcode.compose.sample.GlobalState
 import cn.vividcode.compose.sample.theme.ColorMode
 import cn.vividcode.compose.sample.theme.DynamicThemeState
+import cn.vividcode.compose.sample.window.WindowDraggableArea
 import cn.vividcode.compose.ui.foundation.icon.XIcon
 import cn.vividcode.compose.ui.layout.sidebar.XSidebar
 import cn.vividcode.compose.ui.layout.tree.XTree
@@ -46,7 +47,7 @@ fun HomePage() {
 			)
 			XIcon(
 				icon = if (DynamicThemeState.isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-				rotate = rotate,
+				rotateDegree = rotate,
 				tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
 				backgroundColor = MaterialTheme.colorScheme.primaryContainer,
 				shadowElevation = 4.dp
@@ -80,33 +81,35 @@ private fun Content() {
 
 @Composable
 private fun TitleBar() {
-	Row(
-		modifier = Modifier
-			.fillMaxWidth()
-			.height(70.dp)
-			.shadow(
-				elevation = 2.dp,
-				spotColor = MaterialTheme.colorScheme.primary,
-				ambientColor = MaterialTheme.colorScheme.primary
+	WindowDraggableArea {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(60.dp)
+				.shadow(
+					elevation = 2.dp,
+					spotColor = MaterialTheme.colorScheme.primary,
+					ambientColor = MaterialTheme.colorScheme.primary
+				)
+				.background(MaterialTheme.colorScheme.background)
+				.padding(horizontal = 16.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.End,
+		) {
+			val item = HomeState.itemState.value
+			if (item.icon != null) {
+				XIcon(
+					icon = item.icon!!,
+					size = 24.dp,
+					padding = Dp.Hairline,
+					tintColor = MaterialTheme.colorScheme.primary,
+				)
+				Spacer(modifier = Modifier.width(8.dp))
+			}
+			Text(
+				text = item.alias ?: item.name,
+				color = MaterialTheme.colorScheme.primary
 			)
-			.background(MaterialTheme.colorScheme.background)
-			.padding(horizontal = 16.dp),
-		verticalAlignment = Alignment.CenterVertically,
-		horizontalArrangement = Arrangement.End,
-	) {
-		val item = HomeState.itemState.value
-		if (item.icon != null) {
-			XIcon(
-				icon = item.icon!!,
-				size = 24.dp,
-				padding = Dp.Hairline,
-				tintColor = MaterialTheme.colorScheme.primary,
-			)
-			Spacer(modifier = Modifier.width(8.dp))
 		}
-		Text(
-			text = item.alias ?: item.name,
-			color = MaterialTheme.colorScheme.primary
-		)
 	}
 }

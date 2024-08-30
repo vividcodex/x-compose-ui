@@ -14,6 +14,7 @@ import cn.vividcode.compose.sample.theme.DynamicTheme
 import cn.vividcode.compose.sample.theme.DynamicThemeState
 import cn.vividcode.compose.sample.window.WindowManager
 import cn.vividcode.compose.sample.window.WindowZoomAnimate
+import cn.vividcode.compose.sample.window.compositionLocalProvider
 import java.awt.Dimension
 
 fun main() = application {
@@ -26,7 +27,9 @@ fun main() = application {
 		) {
 			InitWindow()
 			WindowZoomAnimate()
-			Page()
+			compositionLocalProvider {
+				Page()
+			}
 		}
 	}
 }
