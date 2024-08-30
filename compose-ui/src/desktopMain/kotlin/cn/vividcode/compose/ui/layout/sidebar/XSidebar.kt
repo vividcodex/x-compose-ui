@@ -75,7 +75,7 @@ fun XSidebar(
 				.padding(start = offsetX)
 				.fillMaxSize()
 				.shadow(
-					elevation = 4.dp,
+					elevation = 2.dp,
 					spotColor = MaterialTheme.colorScheme.primary,
 					ambientColor = MaterialTheme.colorScheme.primary
 				)
@@ -129,7 +129,7 @@ private fun BoxScope.CloseButton(
 		clip = CircleShape,
 		tintColor = MaterialTheme.colorScheme.onPrimaryContainer,
 		backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-		shadowElevation = 4.dp
+		shadowElevation = 2.dp
 	) {
 		if (sidebarState.value) {
 			sidebarState.value = false

@@ -85,7 +85,7 @@ private fun TitleBar() {
 			.fillMaxWidth()
 			.height(70.dp)
 			.shadow(
-				elevation = 4.dp,
+				elevation = 2.dp,
 				spotColor = MaterialTheme.colorScheme.primary,
 				ambientColor = MaterialTheme.colorScheme.primary
 			)
